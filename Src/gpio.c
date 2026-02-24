@@ -9,11 +9,11 @@
 
 void gpio_init(GPIO_TypeDef* gpio){
     if (gpio == GPIOA)
-        RCC->AHB1ENR |= (1 << 0);
+        RCC->AHB1ENR |= (1U << 0);
     else if (gpio == GPIOB)
-        RCC->AHB1ENR |= (1 << 1);
+        RCC->AHB1ENR |= (1U << 1);
     else if (gpio == GPIOC)
-        RCC->AHB1ENR |= (1 << 2);
+        RCC->AHB1ENR |= (1U << 2);
 }
 
 void gpio_pin_init(GPIO_TypeDef* gpio, uint8_t pinNumber, gpioModes_t pinMode, uint8_t altFunc)
@@ -40,13 +40,23 @@ void gpio_pin_init(GPIO_TypeDef* gpio, uint8_t pinNumber, gpioModes_t pinMode, u
 // Set output value (0 or 1)
 void gpio_setPin(GPIO_TypeDef* gpio, uint8_t pinNumber, uint8_t pinValue) {
     if (pinValue == 1)
-        gpio->ODR |= (1 << pinNumber);
+        gpio->ODR |= (1U << pinNumber);
     else
-        gpio->ODR &= ~(1 << pinNumber);
+        gpio->ODR &= ~(1U << pinNumber);
+}
+
+void gpio_set_output_mode(GPIO_TypeDef* gpio, uint8_t pinNumber, gpioOutputMode_t outputMode){
+    gpio->OTYPER &= ~(1U << pinNumber);      //Clears bit
+    gpio->OTYPER |=  (outputMode << pinNumber);
+}
+
+void gpio_set_pullup_pulldown(GPIO_TypeDef* gpio, uint8_t pinNumber, gpio_pupd_t pupd){
+    gpio->PUPDR &= ~(3U << (pinNumber * 2));
+    gpio->PUPDR |=  (pupd << (pinNumber * 2));
 }
 
 void gpio_togglePin(GPIO_TypeDef* gpio, uint8_t pinNumber){
-    gpio->ODR ^= (1 << pinNumber);
+    gpio->ODR ^= (1U << pinNumber);
 }
 
 // Read input value (returns 0 or 1)
