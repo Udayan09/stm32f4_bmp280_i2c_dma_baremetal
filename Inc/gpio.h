@@ -16,9 +16,22 @@ typedef enum {
     GPIO_ANALOG
 } gpioModes_t;
 
+typedef enum {
+    GPIO_NO_PULLUP_PULLDOWN,         
+    GPIO_PULLUP,
+    GPIO_PULLDOWN,
+} gpio_pupd_t;
+
+typedef enum{
+    GPIO_OUTPUT_MODE_PUSH_PULL,
+    GPIO_OUTPUT_MODE_OPEN_DRAIN
+} gpioOutputMode_t;
+
 
 void gpio_init(GPIO_TypeDef* gpio);
 void gpio_pin_init(GPIO_TypeDef* gpio, uint8_t pinNumber, gpioModes_t pinMode, uint8_t altFunc);
+void gpio_set_output_mode(GPIO_TypeDef* gpio, uint8_t pinNumber, gpioOutputMode_t outputMode);
+void gpio_set_pullup_pulldown(GPIO_TypeDef* gpio, uint8_t pinNumber, gpio_pupd_t pupd);
 void gpio_setPin(GPIO_TypeDef* gpio, uint8_t pinNumber, uint8_t pinValue);
 void gpio_togglePin(GPIO_TypeDef* gpio, uint8_t pinNumber);
 uint8_t gpio_getPin(GPIO_TypeDef* gpio, uint8_t pinNumber);
