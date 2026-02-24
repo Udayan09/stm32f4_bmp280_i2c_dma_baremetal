@@ -1,0 +1,4 @@
+../Src/gpio.c:11:6:gpio_init	5
+../Src/gpio.c:39:6:gpio_setPin	2
+../Src/gpio.c:46:6:gpio_togglePin	1
+../Src/gpio.c:51:9:gpio_getPin	1
