@@ -50,9 +50,14 @@ void gpio_set_output_mode(GPIO_TypeDef* gpio, uint8_t pinNumber, gpioOutputMode_
     gpio->OTYPER |=  (outputMode << pinNumber);
 }
 
-void gpio_set_pullup_pulldown(GPIO_TypeDef* gpio, uint8_t pinNumber, gpio_pupd_t pupd){
+void gpio_set_pullup_pulldown(GPIO_TypeDef* gpio, uint8_t pinNumber, gpioPupd_t pupd){
     gpio->PUPDR &= ~(3U << (pinNumber * 2));
     gpio->PUPDR |=  (pupd << (pinNumber * 2));
+}
+
+void gpio_set_ospeed(GPIO_TypeDef* gpio, uint8_t pinNumber, gpioOspeed_t speed){
+    gpio->OSPEEDR &= ~(3U << (pinNumber * 2));
+    gpio->OSPEEDR |=  (speed << (pinNumber * 2));
 }
 
 void gpio_togglePin(GPIO_TypeDef* gpio, uint8_t pinNumber){
