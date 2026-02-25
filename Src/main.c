@@ -17,23 +17,63 @@
  */
 
 #include <stdint.h>
+#include <stdio.h>
 #include "gpio.h"
+#include "uart.h"
+#include "systick.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
 
-#define PB6_I2C_SCL_ALT_FUNC	4
-#define PB7_I2C_SDA_ALT_FUNC	4
+#define SYSTICK_DELAY_MS	1000
+
+
+/*Global Variables*/
+static char uart_rx_data;
+static int sysTickCount = 0;
+
+
+int __io_putchar(int ch){
+	UART1_write(ch);
+	return ch;
+}
+
 
 int main(void)
 {
 	gpio_init(GPIOC);
     gpio_pin_init(GPIOC, 13, GPIO_OUTPUT, 0);
-
+	UART1_init();
+	systick_1hz_int();
+	char y;
 	
 	for(;;){
-		gpio_togglePin(GPIOC, 13);
-		for (uint32_t i =0; i < 100000; i++);
+		
+		// y = UART1_read();
+		// if (y == 'a') UART1_write('b');
+		//printf("Hello\n\r");
+		//systickDelayMs(2000);
 	}
+}
+
+void USART1_IRQHandler(void){
+	if ((USART1->SR & (1 << 5))){	//Check if Rx ready
+		uart_rx_data = USART1->DR;
+		UART1_write(uart_rx_data);
+	}
+}
+
+void sysTick_callback(void){
+	gpio_togglePin(GPIOC, 13);
+}
+
+void SysTick_Handler(void){
+	sysTickCount++;
+	if (sysTickCount == SYSTICK_DELAY_MS){
+		sysTickCount = 0;
+		sysTick_callback();
+	}
+		
+
 }
