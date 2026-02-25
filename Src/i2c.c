@@ -2,13 +2,6 @@
 #include "gpio.h"
 
 
-#define I2C1EN (1U << 21)
-
-
-#define PB6_I2C_SCL_ALT_FUNC	4
-#define PB7_I2C_SDA_ALT_FUNC	4
-
-
 void I2C1_init(){       //PB7->SDA,     PB6->SCL
 
     //Enable clock access
