@@ -29,24 +29,30 @@
 #define SYSTICK_DELAY_MS	1000
 
 
+
 /*Global Variables*/
 static char uart_rx_data;
 static int sysTickCount = 0;
 
 
-int __io_putchar(int ch){
-	UART1_write(ch);
-	return ch;
+void sysTick_callback(void){
+	gpio_togglePin(GPIOC, 13);
+	//printf("Hello\n\r");
+}
+
+void uart_tx_dma_cb(void){
+	gpio_setPin(GPIOC, 13, PIN_HIGH);
 }
 
 
 int main(void)
 {
+
 	gpio_init(GPIOC);
     gpio_pin_init(GPIOC, 13, GPIO_OUTPUT, 0);
 	UART1_init();
 	systick_1hz_int();
-	char y;
+	//dma2_stream7_init((uint32_t) msg, (uint32_t) &USART1->DR, 31);
 	
 	for(;;){
 		
@@ -64,16 +70,17 @@ void USART1_IRQHandler(void){
 	}
 }
 
-void sysTick_callback(void){
-	gpio_togglePin(GPIOC, 13);
-}
-
 void SysTick_Handler(void){
 	sysTickCount++;
 	if (sysTickCount == SYSTICK_DELAY_MS){
 		sysTickCount = 0;
 		sysTick_callback();
 	}
-		
+}
 
+void DMA2_Stream7_IRQHandler(void){
+	if (DMA2->HISR & (1U << 27)){		//Checking Transfer complete interrupt flag
+		DMA2->HIFCR |= (1U << 27);		//Clear Interrupt Flag
+		uart_tx_dma_cb();
+	}
 }
